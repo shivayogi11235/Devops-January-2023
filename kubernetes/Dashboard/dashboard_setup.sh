@@ -1,5 +1,5 @@
 #!/bin/bash
-https://raw.githubusercontent.com/Harshavardhanreddie/Devops-Jenkins-notes/main/Kubernetes/kubernetes-dashboard.yml
+kubectl apply -f https://raw.githubusercontent.com/jaintpharsha/Devops-January-2023/main/kubernetes/Dashboard/kubernete-dashboard.yml
 
 kubectl --namespace kubernetes-dashboard patch svc kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
 
