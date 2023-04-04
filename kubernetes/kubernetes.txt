@@ -104,16 +104,144 @@ spec:
        - containerPort: 50000
    
 
+	apiVersion: v1
+		- This is the version of api used to create a k8s object.
+		- The fields are case-sensitive and YAML use camelcase.
+		- The type of api are alpha, beta and stable.
+		
+	kind: Pod
+		- here we specify which object we need to create. 
+		- Always object name first letter is capital.
+		
+	metadata:
+	    - This field is used to provide information on the object 
+		  which we are creating.
+		- Information such as name, labels and annotations. 	
+	
+	spec:
+		- This is used to do the actual configuration of the 
+		  object.
+
+		 ports: 
+		    - containerPort: 80	
 
 
+To create / apply a configuration 
+	kubectl apply -f <file>.yml	
+	
+To list objects 
+	kubectl get <object_type>
+		ex: List pods - kubectl get pods 
+		    List deployment - kubectl get deployments
+			
+To delete objects 
+	kubectl delete <object_type>
 
+Deployment controller / Deployment / Deployment k8s
+	- Deployment is used to create replicas of similar kind of pods and It makes sure that at a given point 
+	  of time that number of replicas of pods is always running by using ReplicaSet controller.
+	- If we update the configuration of deployment, it will automatically updates in all the pod replicas.
+	- Rollout and Rollback of pod update is possible. We can use different deployment strategy for update,
+	  by default it uses RollingUpdate. 
+		Other strategies: canary, Recreate, Ramped and Blue-Green 
+	- we can pause the deployment whenever we need.
+	- Deployment internally got its own autoscaler which is of type horizontal smaller (hap).
+	 
+	  RollingUpdate	
+		MaxSurge 
+		  - Specifies the maximum number of pods the Deployment is allowed to create at one time. 
+		  - You can specify this as a whole number (e.g. 5), or as a percentage of the total required number of pods 		
+		         (e.g. 10%, always rounded up to the next whole number). 
+		  - If you do not set MaxSurge, the implicit, default value is 25%.
+		
+		MaxUnavailable 
+		  - specifies the maximum number of pods that are allowed to be unavailable during the rollout. 
+		  - Like MaxSurge, you can define it as an absolute number or a percentage. 
+	
+	To scale up and scale down 
+		1. We can update the replicas count in spec / configuration / yaml file.
+		2. We can use kubectl cli 
+			kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
 
+	To autoscale 
+		1. kubectl autoscale deployment.v1.apps/nginx-deployment --min=5 --max=10 --cpu-percent=80
 
+	deployment = pod + ReplicaSet + autoscalling + RollingUpdate + scale 
 
+Labels, selector and annotations
+	Labels:
+		- K8S labels are provided as metadata key value to identify the object.
+		- We can provide labels to any object in K8S
+		- Labels are used to identify by selectors
+		- We can have same label on multiple objects and 	
 
+		To list labels of any object 
+			kubectl get <object_type> <object_name> --show-labels	
 
+	Selectors:
+		- Selectors are used to select, filter and identify the labeled objects.
 
+		Types of selectors 
+			equality-based 
+				- In this selector we can use only one operator which is equal_to (=, ==) or (!=) not_equal
+				- It looks for exact match for the label  
 
+				app = nginx  or app: nginx
+				app != nginx
+
+			set-based 
+				- This type of selector allows to filter objects based on multiple set of values to a key.
+				- operators that are supported are in , notin and exists
+
+				app in (nginx, nginx1)
+				app exists (nginx, nginx1)
+				app notin (nginx, nginx1)
+
+ReplicaSet vs Replication controller
+	- Both ensures that at a given point of time the specified number of replicas are always running.
+	- Replication controller is very old controller now it is replaced by ReplicaSet.
+	- The only difference between them is Replication controller supports only equality-based selector but 
+	  ReplicaSet support both set-based and equality based selector.
+
+DaemonSet 
+	- DaemonSet creates exactly one pod on each and every worker node in the cluster and ensures that all that are 
+	  always running.
+    - If a new worker node is added or deleted, DaemonSet will also add or delete the pod from the 
+	  respective worker node.
+
+Service (svc) (Basic network configurations in k8s)
+	- Service is an REST api objects with which we can define policies to access set of pods.
+	- Service are cluster level object.
+	- By default, services are loadbalancers.
+	- K8S Preffered port range for services is between 30000 - 50000.  
+	
+	ClusterIP
+		- This is the default type of service in k8S.
+		- using ClusterIP we can expose the IPs of pods to another set of pods with in the cluster.
+
+		To check 
+			1. Create a custom images and push to your Docker registry
+				docker build -t <username>/<repo_name>:<tag> .
+				docker login
+				docker push 
+			2. kubectl apply -f clusterIP.yml
+
+			3. Login to any one pod
+					kubectl exec -it <pod_name> /bin/bash
+
+			4. Try to access the service - ClusterIP using <ClusterIP_ip_address>:<service_port>		 	
+				curl </ClusterIP_ip_address>:<service_port>
+				ex: (for i in {1..20}; do curl 10.101.209.36:30002; echo; done)
+
+	NodePort
+		- This service is most primitive way to get the external traffic directed to our applications 
+		  running inside the cluster in pods.
+		- Automatically a ClusterIP will also be created internally.
+
+		NodePort = ClusterIP + a port mapping to the all the nodes ips. 		
+
+		- If we wont specify any port while creating nodeport, k8s will Automatically asigns a random port 
+		  between 30000 - 32767
 
 
 
