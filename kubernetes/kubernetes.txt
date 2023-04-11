@@ -562,6 +562,111 @@ Adaptor container
 	https://www.magalix.com/blog/kubernetes-patterns-the-ambassador-pattern
 	Note: In linux, If we want to print a file which getting updated live - tail -f <file_name>
 
+Probes 
+	common fields 
+		initialSecondsDelay: After the container started the number seconds to wait before starting the probes
+		periodSeconds: This is the interval of seconds in which the probes execute 
+						( Default 10 seconds and minimum 1 seconds)
+		timeoutSeconds: The number of seconds after which probe timeouts (default 1)	
+		failureThreshold: This is the number of consequtive failures probes should get to mark as failure 
+							(default 3 times and min 1 times)
+		successThreshold: This is the number of consequtive success probes should get to mark as success
+							(default 1 time and min 1 times)
+
+	Endpoints: 
+		http (httpGet)
+		    host: hostname to connect and check the status 
+				  (Default hostname will be IP of the pod in which the probe is defined)
+				ex: www.google.com
+			path: exact path to access the application on the server 
+				ex: /mail	
+			httpHeaders: 
+				Can send custom header messages with the http request 
+			port: Name or number of the port to access the application
+		tcp (tcpSocket)
+			port: Name or number of the port to access the application 
+		exec 	
+			command: command to execute and based on the command status probe status is defined 
+
+Probes 
+	- Probes are periodic call to some application endpoints within a container.
+	- We use probes to track success or failure status of other application.
+	- We can configure if there are subsequent failure accrues we mark probe as failed.
+	- Subsequent success after a failure also we can define.
+	- probes works at container level and init container will not support probes 
+	
+	Common fields
+	   initialSecondsDeplay: After the container started the number of seconds to 
+				 wait before starting the probe.
+	   periodSeconds: The number of seconds interval taken to execute the probe.
+			  (Default 10 seconds and minimum 1 second)
+	   timeoutSeconds: The number of seconds after which probe timeouts 
+			   (default 1)
+	   	
+	   failureThreshold: When a probe fails this is the number of subsequent failure time the 
+			     probe check the application endpoint.
+			     (Default 3 times and minimum 1 time)
+	   
+	   successThreshold: minimum number of subsequent success for a probe.
+			     (Default 1 time and minimum 1 time)
+ 
+	Endpoints: 
+		
+		http probes (httpGet)
+		    host - hostname to connect and check the status 
+		    	 - Default hostname is the IP of the pod in which the probe is running 	
+
+			 ex: www.google.com
+		    path: exact path to access the application on the http server 
+			ex: /mail
+		    httpHeaders: 
+			 can send custom header messages with the request.		
+		    port: Name or number of the port to access the application 
+	
+		tcp probe (tcpSocket)
+		    port: Name or number of the port to access the application
+
+		
+		exec probe 
+		    command - command to execute and based on command status probe status is defined.
+		    
+Liveness probe 
+	- liveness probe is used to check application inside container is healthy and if not healthy the it 
+	   marks container to be restarted by kubelet.
+ 
+Readiness probe 
+	- This probe will run at the initial start of the container.
+	- This probe allows us to give maximum startup time for application before 
+	  running livenessProbe or readinessprobe.
+	  
+	startupProbe: 
+	    httpGet: 
+		   path: /healtz
+		   port: 8080
+		initialDelaySeconds: 3
+	    periodSeconds: 3           
 
 
+Schedule pods on a worker node
+  
+Pod assignment (How to create pods in chosen nodes / particular node)
 
+1. Node Selector
+	- Node selector is a way of creating / binding pod to a worker node based on the node label 
+	- We use node selector to redirect the pod create to a worker node.
+	- We can't use any logical expressions in selection. (only one label can be matched)	
+
+	Create a label on worker node 
+	      kubectl label node <node_name> <key>=<value>
+
+	Using node selector in pod 
+		spec:
+     		  nodeSelector:
+        	     <key>: <value>
+		  containers:
+		     ......
+
+  2. Affinity and anti-affinty 
+  3. Taints and tolerations 
+
+RBAC 
