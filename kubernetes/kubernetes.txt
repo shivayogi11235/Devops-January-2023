@@ -562,6 +562,36 @@ Adaptor container
 	https://www.magalix.com/blog/kubernetes-patterns-the-ambassador-pattern
 	Note: In linux, If we want to print a file which getting updated live - tail -f <file_name>
 
+Probes 
+	common fields 
+		initialSecondsDelay: After the container started the number seconds to wait before starting the probes
+		periodSeconds: This is the interval of seconds in which the probes execute 
+						( Default 10 seconds and minimum 1 seconds)
+		timeoutSeconds: The number of seconds after which probe timeouts (default 1)	
+		failureThreshold: This is the number of consequtive failures probes should get to mark as failure 
+							(default 3 times and min 1 times)
+		successThreshold: This is the number of consequtive success probes should get to mark as success
+							(default 1 time and min 1 times)
 
+	Endpoints: 
+		http (httpGet)
+		    host: hostname to connect and check the status 
+				  (Default hostname will be IP of the pod in which the probe is defined)
+				ex: www.google.com
+			path: exact path to access the application on the server 
+				ex: /mail	
+			httpHeaders: 
+				Can send custom header messages with the http request 
+			port: Name or number of the port to access the application
+		tcp (tcpSocket)
+			port: Name or number of the port to access the application 
+		exec 	
+			command: command to execute and based on the command status probe status is defined 
+
+Liveness probe 
+
+Readiness probe 
+
+startup probe 
 
 
