@@ -17,4 +17,3 @@ spec:
           value: Awesome
       initialDelaySeconds: 5
       periodSeconds: 5
-
