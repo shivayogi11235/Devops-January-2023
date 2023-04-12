@@ -1,17 +1,17 @@
 #!/bin/bash
-if [[ "$1" == "install" ]]; then 
+if [[ "$1" == 'install' ]]; then 
     kubectl apply -f https://raw.githubusercontent.com/jaintpharsha/Devops-January-2023/main/kubernetes/Dashboard/kubernete-dashboard.yml
 
     kubectl --namespace kubernetes-dashboard patch svc kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
 
-    cat > nodeport_dashboard_patch.yaml <<EOF
-    spec:
-      ports:
-      - nodePort: 32000
-        port: 443
-        protocol: TCP
-        targetPort: 8443
-    EOF
+cat > nodeport_dashboard_patch.yaml <<EOF
+spec:
+  ports:
+  - nodePort: 32000
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+EOF
 
     kubectl -n kubernetes-dashboard patch svc kubernetes-dashboard --patch "$(cat nodeport_dashboard_patch.yaml)"
 
@@ -19,8 +19,7 @@ if [[ "$1" == "install" ]]; then
 
     mkdir -p $HOME/certs
 
-    echo '
-    [req]
+    echo '[req]
     default_bit = 4096
     distinguished_name = req_distinguished_name
     prompt = no
@@ -29,8 +28,7 @@ if [[ "$1" == "install" ]]; then
     countryName             = IN
     stateOrProvinceName     = Karnataka
     localityName            = Bengaluru
-    organizationName        = QProfiles
-    ' > $HOME/certs/cert.cnf
+    organizationName        = QProfiles' > $HOME/certs/cert.cnf
 
     openssl genrsa -des3 -passout pass:over4chars -out tls.pass.key 2048 && openssl rsa -passin pass:over4chars -in tls.pass.key -out $HOME/certs/tls.key && rm tls.pass.key
     openssl req -new -key tls.key -out $HOME/certs/tls.csr -config $HOME/certs/cert.cnf
@@ -40,7 +38,7 @@ if [[ "$1" == "install" ]]; then
     echo -e "\n   DASHBOARD_ENDPOINT: Shttps://<any_worker_node_ip>:32000"
     echo -e "\n   USE BELLOW TOKEN TO LOGIN K8S_DASHBOARD\n"
     kubectl describe secret -n kubernetes-dashboard kubernetes-dashboard-token | grep -i 'token:      ' | awk -F 'token:      ' '{print $NF}'
-elif [[ "$1" == "remove" ]]; then 
+elif [[ "$1" == 'remove' ]]; then 
     kubectl delete -f https://raw.githubusercontent.com/jaintpharsha/Devops-January-2023/main/kubernetes/Dashboard/kubernete-dashboard.yml
     [[ -d "$HOME/certs" ]] && rm -rf "$HOME/certs"
 else 
