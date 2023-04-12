@@ -16,9 +16,27 @@ kubectl -n kubernetes-dashboard patch svc kubernetes-dashboard --patch "$(cat no
 
 rm nodeport_dashboard_patch.yaml
 
+mkdir -p $HOME/certs
+
+echo '
+[req]
+default_bit = 4096
+distinguished_name = req_distinguished_name
+prompt = no
+
+[req_distinguished_name]
+countryName             = IN
+stateOrProvinceName     = Karnataka
+localityName            = Bengaluru
+organizationName        = QProfiles
+' > $HOME/certs/cert.cnf
+
+openssl genrsa -des3 -passout pass:over4chars -out tls.pass.key 2048 && openssl rsa -passin pass:over4chars -in tls.pass.key -out $HOME/certs/tls.key && rm tls.pass.key
+openssl req -new -key tls.key -out $HOME/certs/tls.csr -config $HOME/certs/cert.cnf
+
+openssl x509 -req -sha256 -days 365 -in $HOME/certs/tls.csr -signkey $HOME/certs/tls.key -out $HOME/certs/tls.crt
+
 echo -e "\n   DASHBOARD_ENDPOINT: Shttps://<any_worker_node_ip>:32000"
 echo -e "\n   USE BELLOW TOKEN TO LOGIN K8S_DASHBOARD\n"
 kubectl describe secret -n kubernetes-dashboard kubernetes-dashboard-token | grep -i 'token:      ' | awk -F 'token:      ' '{print $NF}'
 
-
-#kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
