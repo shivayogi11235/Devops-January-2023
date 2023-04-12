@@ -34,7 +34,7 @@ EOF
     openssl req -new -key tls.key -out $HOME/certs/tls.csr -config $HOME/certs/cert.cnf
 
     openssl x509 -req -sha256 -days 365 -in $HOME/certs/tls.csr -signkey $HOME/certs/tls.key -out $HOME/certs/tls.crt
-
+    kubectl create secret generic kubernetes-dashboard-certs --from-file=$HOME/certs -n kubernetes-dashboard
     echo -e "\n   DASHBOARD_ENDPOINT: Shttps://<any_worker_node_ip>:32000"
     echo -e "\n   USE BELLOW TOKEN TO LOGIN K8S_DASHBOARD\n"
     kubectl describe secret -n kubernetes-dashboard kubernetes-dashboard-token | grep -i 'token:      ' | awk -F 'token:      ' '{print $NF}'
