@@ -666,7 +666,109 @@ Pod assignment (How to create pods in chosen nodes / particular node)
 		  containers:
 		     ......
 
-  2. Affinity and anti-affinty 
-  3. Taints and tolerations 
+  2. Node affinity and anti-affinity 
+		Node affinity 
+			- nodeSelector with logical expressions is affinity 
+			- using node affinity we can spread the pod schedule on worker nodes based on 
+					- cpacity (memory-intense mode)
+					- Availability zone (HA mode)
+
+			prefferedDuringSchedullingIgnoreDuringExecution - The scheduler tries to find a node matching the rules, if 
+			a matching node is not 	available then scheduler still schedules the pods in normal way.
+
+			requiredDuringSchedullingIgnoreDuringExecution - THe scheduler will not schedule the pod until 
+			the rules are matching.
+
+			IgnoreDuringExecution - If the node labels are changes after the scheduling of pods still the pods continues to run.
+			
+			spec:
+				affinity:
+					nodeAffinity:
+					requiredDuringSchedulingIgnoredDuringExecution:
+						nodeSelectorTerms:
+						- matchExpressions:
+						- key: topology.kubernetes.io/zone
+							operator: In
+							values:
+							- antarctica-east1
+							- antarctica-west1
+		
+		node Anti-affinity (Inter-pod Affinity)
+			- This is used to define whether a given pod should or should not be 
+			  scheduled on a particular node based on conditional labels.	
+			
+			spec: 
+				containers: 
+						........
+						
+				affinity: 
+					nodeAntiAffinity:
+					  requiredDuringSchedulingIgnoredDuringExecution:
+						IfNotPresent:
+						- matchExpressions:
+						  - key: <label_key>
+							operator: In
+							values:
+							- <label_value>
+
+	3. 	Taints and Tolerations	
+			- Taints are used to mark worker nodes so that the marked worker node 
+			  repels all the pods without having Tolerations for that taint.
+
+			taints Effects 
+				1) NoSchedule 
+						- This taint means unless a pod with the Tolerations matching the scheduler 
+						  will never schedule the pod.
+
+				2) NoExecute
+						- This taint means if pod should be running means tolerations should be there.
+						- We can use this to delete some sets pods based on conditions.
+
+			To taint a worker 
+				kubectl taint node <node_name> <taint_key>=<taint_value>:<taint_effect>
+
+			To untaint a worker  (use - at the end of taint command)
+				kubectl taint node <node_name> <taint_key>=<taint_value>:<taint_effect>-
+
+			tolerations in pod 
+				spec: 
+				   tolerations:	
+				    - key: <taint_key>
+					  operator: "Equal"
+					  value: <taint_value>
+					  effect: <taint_effect>
+						
+			Note: if the operator used is "Equal then we need to provide value and if use Exists then no value is required.	
 
 RBAC 
+- Type of account 
+- Roles 
+- Attach a role to account 
+
+RBAC - Account 
+	1. USER ACCOUNT 
+	2. SERVICE ACCOUNT 
+		1. To create a service account 
+			1. kubectl create sa k8s-sa
+			2. Using configuration file 
+
+		2. We need to create a bearer token to authenticate ServiceAccount and attach it ServiceAccount
+
+Roles 
+	Role 
+		- namespace level 
+
+	ClusterRole 
+
+commonFields: 
+	apiGroups: List of api's to control the access 
+			   For all api's [""]
+	Resources: k8s objects on which we want to define the role 
+			  ["pod", "deployments"]
+    Verbs: The operations/ actions that can be performed 
+		  ["list", "get"]
+
+Bind the role to account 
+	- RoleBinding 
+		
+	- ClusterRoleBinding		    	 

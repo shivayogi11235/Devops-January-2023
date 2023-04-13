@@ -26,7 +26,7 @@ metadata:
     k8s-app: kubernetes-dashboard
   name: kubernetes-dashboard
   namespace: kubernetes-dashboard
-
+  
 ---
 
 kind: Service
@@ -47,14 +47,14 @@ spec:
 
 ---
 
-apiVersion: v1
-kind: Secret
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard-certs
-  namespace: kubernetes-dashboard
-type: Opaque
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   labels:
+#     k8s-app: kubernetes-dashboard
+#   name: kubernetes-dashboard-certs
+#   namespace: kubernetes-dashboard
+# type: Opaque
 
 ---
 
@@ -103,118 +103,35 @@ metadata:
 
 ---
 
-kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
-rules:
-  # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
-  - apiGroups: [""]
-    resources: ["secrets"]
-    resourceNames: ["kubernetes-dashboard-key-holder", "kubernetes-dashboard-certs", "kubernetes-dashboard-csrf"]
-    verbs: ["get", "update", "delete"]
-    # Allow Dashboard to get and update 'kubernetes-dashboard-settings' config map.
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    resourceNames: ["kubernetes-dashboard-settings"]
-    verbs: ["get", "update"]
-    # Allow Dashboard to get metrics.
-  - apiGroups: [""]
-    resources: ["services"]
-    resourceNames: ["heapster", "dashboard-metrics-scraper"]
-    verbs: ["proxy"]
-  - apiGroups: [""]
-    resources: ["services/proxy"]
-    resourceNames: ["heapster", "http:heapster:", "https:heapster:", "dashboard-metrics-scraper", "http:dashboard-metrics-scraper"]
-    verbs: ["get"]
-
----
-
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard
-rules:
-  # Allow Metrics Scraper to get metrics from the Metrics server
-  - apiGroups: ["metrics.k8s.io"]
-    resources: ["pods", "nodes"]
-    verbs: ["get", "list", "watch"]
-
-  # Other resources
-  - apiGroups: [""]
-    resources: ["nodes", "namespaces", "pods", "serviceaccounts", "services", "configmaps", "endpoints", "persistentvolumeclaims", "replicationcontrollers", "replicationcontrollers/scale", "persistentvolumeclaims", "persistentvolumes", "bindings", "events", "limitranges", "namespaces/status", "pods/log", "pods/status", "replicationcontrollers/status", "resourcequotas", "resourcequotas/status"]
-    verbs: ["get", "list", "watch"]
-  
-  - apiGroups: ["apps"]
-    resources: ["daemonsets", "deployments", "deployments/scale", "replicasets", "replicasets/scale", "statefulsets"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["autoscaling"]
-    resources: ["horizontalpodautoscalers"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["batch"]
-    resources: ["cronjobs", "jobs"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["extensions"]
-    resources: ["daemonsets", "deployments", "deployments/scale", "networkpolicies", "replicasets", "replicasets/scale", "replicationcontrollers/scale"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["networking.k8s.io"]
-    resources: ["ingresses", "networkpolicies"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["policy"]
-    resources: ["poddisruptionbudgets"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["storageclasses", "volumeattachments"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["clusterrolebindings", "clusterroles", "roles", "rolebindings", ]
-    verbs: ["get", "list", "watch"]
-
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
   name: kubernetes-dashboard
   namespace: kubernetes-dashboard
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: kubernetes-dashboard
+  kind: ClusterRole
+  name: cluster-admin
 subjects:
   - kind: ServiceAccount
     name: kubernetes-dashboard
     namespace: kubernetes-dashboard
-
+    
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubernetes-dashboard
+  name: kubernetes-dashboard-head
+  namespace: kubernetes-dashboard-head
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kubernetes-dashboard
+  name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: kubernetes-dashboard
-    namespace: kubernetes-dashboard
+    name: kubernetes-dashboard-head
+    namespace: kubernetes-dashboard-head
 
 ---
 
@@ -247,6 +164,8 @@ spec:
             - containerPort: 8443
               protocol: TCP
           args:
+            - --tls-cert-file=/tls.crt
+            - --tls-key-file=/tls.key
             - --auto-generate-certificates
             - --namespace=kubernetes-dashboard
             # Uncomment the following line to manually specify Kubernetes API server Host
