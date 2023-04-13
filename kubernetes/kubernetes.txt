@@ -752,5 +752,23 @@ RBAC - Account
 			1. kubectl create sa k8s-sa
 			2. Using configuration file 
 
-		2. We need to create a bearer token to authenticate ServiceAccount 
-		    	 
+		2. We need to create a bearer token to authenticate ServiceAccount and attach it ServiceAccount
+
+Roles 
+	Role 
+		- namespace level 
+
+	ClusterRole 
+
+commonFields: 
+	apiGroups: List of api's to control the access 
+			   For all api's [""]
+	Resources: k8s objects on which we want to define the role 
+			  ["pod", "deployments"]
+    Verbs: The operations/ actions that can be performed 
+		  ["list", "get"]
+
+Bind the role to account 
+	- RoleBinding 
+		
+	- ClusterRoleBinding		    	 
