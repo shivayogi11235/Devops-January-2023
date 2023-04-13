@@ -3,6 +3,6 @@ kind: ClusterRole
 metadata:
   name: k8s-sa-cluster-role
 rules:
-- apiGroups: [""]
+- apiGroups: ["apps"]
   resources: ["deployments"]
   verbs: ["get", "list"]
