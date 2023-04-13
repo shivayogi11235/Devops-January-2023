@@ -739,5 +739,18 @@ Pod assignment (How to create pods in chosen nodes / particular node)
 					  effect: <taint_effect>
 						
 			Note: if the operator used is "Equal then we need to provide value and if use Exists then no value is required.	
-			
+
 RBAC 
+- Type of account 
+- Roles 
+- Attach a role to account 
+
+RBAC - Account 
+	1. USER ACCOUNT 
+	2. SERVICE ACCOUNT 
+		1. To create a service account 
+			1. kubectl create sa k8s-sa
+			2. Using configuration file 
+
+		2. We need to create a bearer token to authenticate ServiceAccount 
+		    	 
