@@ -5,3 +5,4 @@ metadata:
 spec:
   hard:
     count/pods: 2
+    count/deployments: 2
