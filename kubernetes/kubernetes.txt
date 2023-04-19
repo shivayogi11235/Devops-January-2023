@@ -909,4 +909,18 @@ Resource quotas and limits
 	how to limit memory or cpu to a pod ?
 
 	Count quota 
-		
+		count/persistentvolumeclaims
+		count/services
+		count/secrets
+		count/configmaps
+		count/replicationcontrollers
+		count/deployments.apps
+		count/replicasets.apps
+		count/statefulsets.apps
+		count/jobs.batch
+		count/cronjobs.batch
+		count/pods 
+
+	Quota CPU/memory/Disk 
+		memory
+			
