@@ -5,7 +5,7 @@ metadata:
 spec:
   targetRef:
 	  apiVersion: "apps/v1"
-	  kind:       Deployment
-	  name:       php-deployment
+		kind:       Deployment
+		name:       php-deployment
   updatePolicy:
 	  updateMode: "Auto"  
