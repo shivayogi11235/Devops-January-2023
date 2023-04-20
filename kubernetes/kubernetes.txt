@@ -901,7 +901,7 @@ USER ACCOUNT
 
 ---------------------------------------------------------------------------------------------------------------------------	
 
-pod eviction 
+Pod eviction 
 
 	- Kubernetes evict pods if the node resources are running out such as cpu, RAM and storage.
 	- Pod with failed state will be evicted first because they may not running but could still 
@@ -914,17 +914,15 @@ pod eviction
 				  - The memory limit must equal the memory request.
 				  - There must be a CPU limit and a CPU request.
 				  - The CPU limit must equal the CPU request.
+
 			2. Priority class.
 				- A pod"s priority class defines the importance of the pod compared to other 
 				  pods running in the cluster.
-				- based on the priority low to high pods will be evicted.  
+				- Based on the priority low to high pods will be evicted.  
+		  		- Cluster autoscaler tools are mostly provided by public cloud providers.	
 
-
-		  - Cluster autoscaler tools are mostly provided by public cloud providers.	
-
- 
 Resource quotas and limits 
-	How to limit the number of pods to a namepsace ?
+	How to limit the number of pods to a namespace ?
 	how to limit the memory to a pod ?
 	
 	Count quota 
@@ -1002,8 +1000,25 @@ Resource quotas and limits
 						memory: "250Mi"
 						cpu: 1
 
-HPA and VPA 
-	HPA (Horizontal pod autoscaler )
+HPA and VPA
+	HPA (Horizontal pod autoscaler 
 	- HPA will automatically scales the number pf pod replicas using deployment, replicates, statefulSet based on CPU/memory threshold.
 	- We need metric-server as a source for resource monitor for HPA
 
+	VPA
+	1. We need install metrics-server 
+		Goto https://github.com/kubernetes-sigs/metrics-server
+		1. kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+		2. Edit the metrics-server deployment configuration 
+			a. kubectl edit deployment -n kube-system metrics-server
+			b. add the bellow configuration 
+			- --cert-dir=/tmp
+			- --secure-port=4443
+			- --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+			- --kubelet-use-node-status-port
+			- --metric-resolution=15s
+			command:
+			- /metrics-server        
+			- --kubelet-insecure-tls
+			- --kubelet-preferred-address-types=InternalIP
