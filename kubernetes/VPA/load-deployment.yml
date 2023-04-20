@@ -18,5 +18,5 @@ spec:
         command:
         - /bin/sh
         - -c
-        - "while true; do wget -q -0- http://php-apache; done"
+        - "while true; do wget -q http://php-apache; done"
 
