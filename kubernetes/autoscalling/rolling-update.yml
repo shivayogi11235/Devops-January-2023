@@ -7,9 +7,9 @@ spec:
   selector:
     matchLabels:
       app: nginx-server
-  stratergy:
+  strategy:
     type: RollingUpdate
-    rolligUpdate:
+    rollingUpdate:
       maxUnavailable: 50%
       maxSurge: 1
   template:
