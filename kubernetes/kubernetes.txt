@@ -1023,4 +1023,12 @@ HPA and VPA
 			- --kubelet-insecure-tls
 			- --kubelet-preferred-address-types=InternalIP
 
-Deployment Strategies 			
+Deployment Strategies 
+  Blue/Green Deployment 
+  Canary 			
+
+Ingress 
+1. Ingress controller
+	Installed nginx ingress controller 
+	
+2. Ingress Resource (Ingress)  
