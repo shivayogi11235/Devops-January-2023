@@ -1105,4 +1105,19 @@ Deployment stratergies
 		  introducing a new software version into production by gradually rolling out 
 		  the change to a small subgroup of users, before rolling it out to the entire 
 		  platform/infrastructure.	  
-		  
+
+Multi master cluster 	
+	What is the size of the k8s cluster ?
+		- we are manitaining different cluster for different environment
+		- we have one big cluster and environments are maintained through namepsaces
+		- always the count of master nodes should a odd number 
+		- we are using loadbalancer / multiple people are working they may dd the worker nodes 
+		  so I never kept exact count of nodes but on average we have 20 to 25 worker nodes.
+	
+	Why always the number of master nodes is odd number ?
+		- Based on Quoram calculation (n/2+1) we get same quoram failure rate for odd number 
+		  and its next even number of nodes, so it is better to use odd number nodes instead 
+		  of even number and we start with minimum 3 master nodes.
+		- Always tell odd number of nodes (any odd number starting with 3, 5, 7, 9)
+		- Based on the quorum value we choose only odd number of nodes starting with 3 to 
+		  achive better fault tollerance cluster.
