@@ -12,8 +12,6 @@ spec:
       labels:
         app: ip-app
     spec:
-      nodeSelector:
-        node: worker1
       containers:
       - name: ipapp
         image: harshajain/ip-app:1
