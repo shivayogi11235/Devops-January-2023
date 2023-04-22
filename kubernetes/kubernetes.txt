@@ -1121,3 +1121,12 @@ Multi master cluster
 		- Always tell odd number of nodes (any odd number starting with 3, 5, 7, 9)
 		- Based on the quorum value we choose only odd number of nodes starting with 3 to 
 		  achive better fault tollerance cluster.
+
+
+restartPolicy 
+	1. Always:
+	2. OnFailer: 
+	3. Never:  
+
+Jobs 
+	
