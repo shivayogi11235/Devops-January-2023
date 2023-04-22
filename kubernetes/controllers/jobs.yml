@@ -8,5 +8,5 @@ spec:
       containers:
       - name: busybox
         image: busybox
-        command: ["/bin/bash", "-c", "sleep 5"]
+        command: ["echo", "JOBS"]
       restartPolicy: Never
