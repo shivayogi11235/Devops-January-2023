@@ -532,3 +532,36 @@ Docker maven direct run example
 		docker run -it --rm -v maven_repo:/root/.m2 \
     			-v "$(pwd)":/app -w /app \
     			--network maven maven:3.8.6-openjdk-18-slim mvn clean integration-test  
+
+
+Multistage build 
+	How to optimise docker build process ?
+	How to reduce the size of the docker image or container ? 
+
+	After docker 1.6 version docker released this option.
+	1. There are 2 problems with the normal build process 
+			1. Size: challenge is to keep the image and its containers size as minimal as  		
+			   possible.
+			2. larger the surface area more the application is vulnerable to attacks. 
+	
+		- Multistage build allows us to define multiple FROM in same Dockerfile.
+		- Dependency between multiple FROM is maintained by naming FROM using 
+		  AS keyword and we can refer this name in another FROM.
+
+				FROM <base_image> AS <STAGE_NAME>
+				
+		- Only the final FROM image is created leaving back all the other FROM images / stages.
+		- Copy only the required files from the named FROM stage like below.
+				FROM final_build
+				COPY --from <STAGE_NAME> <src_named_stage> <dest>
+	
+	2. Always try to use the slim / alpine / stretch version of base image instead 
+	   of using the fully loaded latest base image.
+	   
+Docker compose 
+Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration.
+Step 1 − Download the necessary files from github using the following command −
+		curl -L "https://github.com/docker/compose/releases/download/1.10.0-rc2/dockercompose-$(uname -s) -$(uname -m)" -o /home/demo/docker-compose
+		docker-compose version 
+
+Demo: https://docs.docker.com/compose/gettingstarted/		
