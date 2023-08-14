@@ -5,7 +5,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx-example
+  ingressClassName: nginx
   rules:
   - host: ingress.example.com
     http:
@@ -17,10 +17,10 @@ spec:
             name: ingress-app-cluster-ip
             port:
               number: 30002
-      - path: /name
+      - path: /health
         pathType: Prefix
         backend:
           service:
-            name: ingress-app-cluster-ip
+            name: ingress-app-cluster-ip-name
             port:
-              number: 30002
+              number: 30004
